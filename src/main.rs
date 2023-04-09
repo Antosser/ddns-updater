@@ -10,7 +10,7 @@ struct Data {
     hostname: String,
 }
 
-/// Application for updating ddns on Google servers
+/// Simple application for updating ddns on Google servers
 #[derive(Parser)]
 struct Args {
     /// The location of the .toml config file
