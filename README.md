@@ -1,9 +1,16 @@
 # DDNS Updater
 Simple application for updating ddns on Google servers
 
-## How to use
-1. Download the binary from the lastest releases page.
-2. Run it while providing the path to the toml config file as an argument
+## Usage
+```
+Application for updating ddns on Google servers
+
+Usage: ddns-updater [OPTIONS]
+
+Options:
+  -c, --config-file <CONFIG_FILE>  The location of the .toml config file [default: ddns.toml]
+  -h, --help                       Print help
+```
 
 ## TOML file
 The program requires a TOML config file to work. It must either be called `ddns.toml` in the wd or be provided as an argument
