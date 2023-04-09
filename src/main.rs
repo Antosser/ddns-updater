@@ -1,3 +1,4 @@
+use clap::Parser;
 use std::{fs, process::exit};
 
 use serde::Deserialize;
@@ -9,9 +10,19 @@ struct Data {
     hostname: String,
 }
 
+/// Application for updating ddns on Google servers
+#[derive(Parser)]
+struct Args {
+    /// The location of the .toml config file
+    #[clap(short, long, default_value = "ddns.toml")]
+    config_file: String,
+}
+
 #[tokio::main]
 async fn main() {
-    let filename = "ddns.toml";
+    let args = Args::parse();
+
+    let filename = args.config_file;
 
     let content = match fs::read_to_string(filename) {
         Ok(c) => c,
