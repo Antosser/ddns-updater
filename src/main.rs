@@ -1,5 +1,5 @@
 use clap::Parser;
-use log::{debug, error, info};
+use log::{debug, error, info, warn};
 use std::{fs, process::exit};
 
 use serde::Deserialize;
@@ -45,10 +45,15 @@ async fn main() {
     let mut prev_ip: Option<String> = None;
 
     loop {
-        let ip = public_ip::addr()
-            .await
-            .unwrap_or_else(|| panic!("Can't get IP-Address"))
-            .to_string();
+        let ip = match public_ip::addr().await {
+            Some(x) => x.to_string(),
+            None => {
+                warn!("Can't get IP-Address. Retrying in 10 seconds");
+                std::thread::sleep(std::time::Duration::from_secs(2));
+
+                continue;
+            }
+        };
 
         debug!("IP-Address: {}", ip);
 
