@@ -59,6 +59,7 @@ async fn main() {
 
         if *prev_ip.as_ref().unwrap_or(&"".to_owned()) != ip {
             prev_ip = Some(ip.clone());
+            info!("IP-Address changed to {}", ip);
 
             info!("Response: {}", 'print: {
                 if let Ok(response) = reqwest::get(format!(
