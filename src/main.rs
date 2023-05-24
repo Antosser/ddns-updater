@@ -9,6 +9,7 @@ struct Data {
     username: String,
     password: String,
     hostname: String,
+    ipv6: Option<bool>,
 }
 
 /// Simple application for updating ddns on Google servers
@@ -21,7 +22,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let args = Args::parse();
 
@@ -45,13 +46,41 @@ async fn main() {
     let mut prev_ip: Option<String> = None;
 
     loop {
-        let ip = match public_ip::addr().await {
-            Some(x) => x.to_string(),
-            None => {
-                warn!("Can't get IP-Address. Retrying in 10 seconds");
-                std::thread::sleep(std::time::Duration::from_secs(2));
+        let ip = {
+            if data.ipv6 == Some(true) {
+                // reqwest::get("http://checkip6.spdyn.de/")
+                //     .await
+                //     .unwrap()
+                //     .text()
+                //     .await
+                //     .unwrap()
+                match reqwest::get("http://checkip6.spdyn.de/").await {
+                    Ok(response) => match response.text().await {
+                        Ok(text) => text,
+                        Err(e) => {
+                            warn!("Can't get IP-Address. Retrying in 10 seconds: {}", e);
+                            std::thread::sleep(std::time::Duration::from_secs(2));
 
-                continue;
+                            continue;
+                        }
+                    },
+                    Err(e) => {
+                        warn!("Can't get IP-Address. Retrying in 10 seconds: {}", e);
+                        std::thread::sleep(std::time::Duration::from_secs(2));
+
+                        continue;
+                    }
+                }
+            } else {
+                match public_ip::addr().await {
+                    Some(x) => x.to_string(),
+                    None => {
+                        warn!("Can't get IP-Address. Retrying in 10 seconds");
+                        std::thread::sleep(std::time::Duration::from_secs(2));
+
+                        continue;
+                    }
+                }
             }
         };
 
