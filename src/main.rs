@@ -9,7 +9,8 @@ struct Data {
     username: String,
     password: String,
     hostname: String,
-    ipv6: Option<bool>,
+    ipv6: bool,
+    timeout: u64,
 }
 
 /// Simple application for updating ddns on Google servers
@@ -47,7 +48,7 @@ async fn main() {
 
     loop {
         let ip = {
-            if data.ipv6 == Some(true) {
+            if data.ipv6 {
                 // reqwest::get("http://checkip6.spdyn.de/")
                 //     .await
                 //     .unwrap()
@@ -108,6 +109,6 @@ async fn main() {
             debug!("IP-Address didn't change");
         }
 
-        std::thread::sleep(std::time::Duration::from_secs(2));
+        std::thread::sleep(std::time::Duration::from_secs(data.timeout));
     }
 }
