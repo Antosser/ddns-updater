@@ -20,6 +20,8 @@ The program requires a TOML config file to work. It must either be called `ddns.
 username = "myusername"
 password = "mypassword"
 hostname = "antonaparin.com"
+ipv6 = false
+timeout = 60 # in seconds
 ```
 
 ## Compiling yourself - For linux users
