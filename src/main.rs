@@ -55,8 +55,8 @@ async fn main() {
                 //     .text()
                 //     .await
                 //     .unwrap()
-                match reqwest::get("http://checkip6.spdyn.de/").await {
-                    Ok(response) => match response.text().await {
+                match ureq::get("http://checkip6.spdyn.de/").call() {
+                    Ok(response) => match response.into_string() {
                         Ok(text) => text,
                         Err(e) => {
                             warn!("Can't get IP-Address. Retrying in 10 seconds: {}", e);
@@ -92,13 +92,13 @@ async fn main() {
             info!("IP-Address changed to {}", ip);
 
             info!("Response: {}", 'print: {
-                if let Ok(response) = reqwest::get(format!(
+                if let Ok(response) = ureq::get(&format!(
                     "https://{}:{}@domains.google.com/nic/update?hostname={}&myip={}",
                     data.username, data.password, data.hostname, ip
                 ))
-                .await
+                .call()
                 {
-                    if let Ok(text) = response.text().await {
+                    if let Ok(text) = response.into_string() {
                         break 'print text;
                     }
                 }
